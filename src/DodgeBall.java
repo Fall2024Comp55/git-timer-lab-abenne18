@@ -19,7 +19,9 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 	private GLabel text;
 	private Timer movement;
 	private RandomGenerator rgen;
-	private int numTimes = -1;
+	private int numTimes = 0;
+	private GLabel scoreLabel;
+	private int scoreNum = 0;
 	
 	public static final int SIZE = 25;
 	public static final int SPEED = 2;
@@ -29,6 +31,8 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 	public static final int WINDOW_WIDTH = 300;
 	
 	public void run() {
+		scoreLabel = new GLabel ("Score: " + scoreNum, 10,20);
+		add(scoreLabel);
 		rgen = RandomGenerator.getInstance();
 		balls = new ArrayList<GOval>();
 		enemies = new ArrayList<GRect>();
@@ -49,6 +53,12 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 	    }
 		moveAllBallsOnce();
 		moveAllEnemiesOnce();
+		
+		if (enemies.size() > MAX_ENEMIES) {
+			movement.stop();
+			removeAll();
+			displayGameOver();
+		}
 	}
 	
 	public void mousePressed(MouseEvent e) {
@@ -103,8 +113,16 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 			if (hitCheck instanceof GRect) {
 	            remove(hitCheck); 
 	            enemies.remove(hitCheck);
+	            scoreNum++;
+	            scoreLabel.setLabel("Score: " + scoreNum);
+	            
 	        }
 		}
+	}
+	
+	private void displayGameOver() {
+	    GLabel gameOverLabel = new GLabel("You Lost! Score: " + numTimes , WINDOW_WIDTH / 2 - 100, WINDOW_HEIGHT / 2);
+	    add(gameOverLabel);
 	}
 	
 	public void init() {
